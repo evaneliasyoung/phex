@@ -93,11 +93,14 @@ phex unpack assets/sprites.json -o sprites_output
 # Use 8 workers regardless of CPU count
 phex unpack assets/sprites.json --workers 8
 
-# Pack textures to ./atlas.json
+# Pack textures to ./atlas/atlas.json
 phex pack sprites -o .
 
-# Pack textures to ./rooms/coffee.json
-phex pack sprites -o ./rooms -n coffee
+# Pack textures to ./items/atlas.json
+phex pack sprites -o ./items
+
+# Pack textures to ./rooms/coffee.json with a larger maximum sheet size
+phex pack sprites -o ./rooms -n coffee -m 4096
 ```
 
 ---
