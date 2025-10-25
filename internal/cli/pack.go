@@ -21,6 +21,10 @@ func RunPack(inputDir, outputDir, packName string, maxSize, padding int) error {
 
 	fmt.Printf("[info] found %d textures\n", numSprites)
 
+	if outputDir == "" {
+		outputDir = filepath.Join(filepath.Dir(inputDir), packName)
+	}
+
 	if err := os.MkdirAll(outputDir, 0o755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
