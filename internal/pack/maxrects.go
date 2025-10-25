@@ -8,12 +8,11 @@ import (
 
 type maxRectsBin struct {
 	phaser.Size
-	allowRotate bool
-	free        []image.Rectangle
+	free []image.Rectangle
 }
 
-func newMaxRectsBin(w, h int, allowRotate bool) *maxRectsBin {
-	return &maxRectsBin{Size: phaser.Size{W: w, H: h}, allowRotate: allowRotate, free: []image.Rectangle{image.Rect(0, 0, w, h)}}
+func newMaxRectsBin(w, h int) *maxRectsBin {
+	return &maxRectsBin{Size: phaser.Size{W: w, H: h}, free: []image.Rectangle{image.Rect(0, 0, w, h)}}
 }
 
 type maxrectsPlace struct {
@@ -31,14 +30,6 @@ func (b *maxRectsBin) insert(w, h int) maxrectsPlace {
 			ls := max(r.Dx()-w, r.Dy()-h)
 			if ss < bestSS || (ss == bestSS && ls < bestLS) {
 				best = maxrectsPlace{Rect: phaser.Rect{X: r.Min.X, Y: r.Min.Y, W: w, H: h}, rot: false, ok: true}
-				bestSS, bestLS = ss, ls
-			}
-		}
-		if b.allowRotate && h <= r.Dx() && w <= r.Dy() {
-			ss := min(r.Dx()-h, r.Dy()-w)
-			ls := max(r.Dx()-h, r.Dy()-w)
-			if ss < bestSS || (ss == bestSS && ls < bestLS) {
-				best = maxrectsPlace{Rect: phaser.Rect{X: r.Min.X, Y: r.Min.Y, W: w, H: h}, rot: true, ok: true}
 				bestSS, bestLS = ss, ls
 			}
 		}

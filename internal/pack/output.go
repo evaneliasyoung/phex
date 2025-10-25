@@ -24,12 +24,8 @@ func SaveSheets(packed []*PackedSprite, sheets []*Sheet, packName, outputDir str
 		canvas := image.NewNRGBA(image.Rect(0, 0, w, h))
 		for _, ps := range sh.Sprites {
 			src := ps.Sprite.Trimmed
-			if ps.Rotated {
-				blitRotate90(canvas, ps.Position.X, ps.Position.Y, src)
-			} else {
-				dst := image.Rect(ps.Position.X, ps.Position.Y, ps.Position.X+src.Bounds().Dx(), ps.Position.Y+src.Bounds().Dy())
-				draw.Draw(canvas, dst, src, image.Point{}, draw.Src)
-			}
+			dst := image.Rect(ps.Position.X, ps.Position.Y, ps.Position.X+src.Bounds().Dx(), ps.Position.Y+src.Bounds().Dy())
+			draw.Draw(canvas, dst, src, image.Point{}, draw.Src)
 		}
 		outPath := filepath.Join(outputDir, fmt.Sprintf("%s-%d.webp", packName, i))
 		f, err := os.Create(outPath)
@@ -44,19 +40,6 @@ func SaveSheets(packed []*PackedSprite, sheets []*Sheet, packName, outputDir str
 		_ = f.Close()
 	}
 	return nil
-}
-
-func blitRotate90(dst *image.NRGBA, dx, dy int, src *image.NRGBA) {
-	sw, sh := src.Bounds().Dx(), src.Bounds().Dy()
-	for sy := range sh {
-		for sx := range sw {
-			dx2 := dx + sy
-			dy2 := dy + (sw - 1 - sx)
-			srcOff := sy*src.Stride + sx*4
-			dstOff := dy2*dst.Stride + dx2*4
-			copy(dst.Pix[dstOff:dstOff+4], src.Pix[srcOff:srcOff+4])
-		}
-	}
 }
 
 func SaveJSON(original []*Sprite, packed []*PackedSprite, aliasMap map[string]string, sheets []*Sheet, packName, outputDir string) error {
@@ -88,12 +71,9 @@ func SaveJSON(original []*Sprite, packed []*PackedSprite, aliasMap map[string]st
 			}
 			trim := orig.TrimBounds
 			fw, fh := trim.Dx(), trim.Dy()
-			if ps.Rotated {
-				fw, fh = fh, fw
-			}
 			tex.Frames = append(tex.Frames, phaser.Frame{
 				FileName:         orig.Name,
-				Rotated:          ps.Rotated,
+				Rotated:          false,
 				Trimmed:          orig.WasTrimmed,
 				SourceSize:       phaser.Size{W: orig.FullSize.Dx(), H: orig.FullSize.Dy()},
 				SpriteSourceSize: phaser.Rect{X: trim.Min.X, Y: trim.Min.Y, W: trim.Dx(), H: trim.Dy()},

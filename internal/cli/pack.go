@@ -8,7 +8,7 @@ import (
 	"github.com/evaneliasyoung/phex/internal/pack"
 )
 
-func RunPack(inputDir, outputDir, packName string, maxSize, padding int, rotate bool) error {
+func RunPack(inputDir, outputDir, packName string, maxSize, padding int) error {
 	files, err := filepath.Glob(filepath.Join(inputDir, "*.png"))
 	if err != nil {
 		return fmt.Errorf("failed to list input directory: %w", err)
@@ -32,7 +32,7 @@ func RunPack(inputDir, outputDir, packName string, maxSize, padding int, rotate 
 
 	deduped, aliasMap := pack.DedupeWithMap(sprites)
 
-	packed, sheets := pack.PackSprites(deduped, maxSize, padding, rotate)
+	packed, sheets := pack.PackSprites(deduped, maxSize, padding)
 
 	fmt.Printf("[info] writing to %s\n", filepath.Join(outputDir, packName))
 	if err := pack.SaveSheets(packed, sheets, packName, outputDir); err != nil {

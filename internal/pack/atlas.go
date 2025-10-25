@@ -11,7 +11,6 @@ type PackedSprite struct {
 	Sprite     *Sprite
 	SheetIndex int
 	Position   image.Point
-	Rotated    bool
 }
 
 type Sheet struct {
@@ -23,7 +22,7 @@ func contains(a, b image.Rectangle) bool {
 	return a.Min.X <= b.Min.X && a.Min.Y <= b.Min.Y && a.Max.X >= b.Max.X && a.Max.Y >= b.Max.Y
 }
 
-func PackSprites(sprites []*Sprite, maxSize, padding int, allowRotate bool) ([]*PackedSprite, []*Sheet) {
+func PackSprites(sprites []*Sprite, maxSize, padding int) ([]*PackedSprite, []*Sheet) {
 	sorted := make([]*Sprite, len(sprites))
 	copy(sorted, sprites)
 	sort.Slice(sorted, func(i, j int) bool {
@@ -37,26 +36,26 @@ func PackSprites(sprites []*Sprite, maxSize, padding int, allowRotate bool) ([]*
 		return ia > ja
 	})
 
-	return packMaxRects(sorted, maxSize, padding, allowRotate)
+	return packMaxRects(sorted, maxSize, padding)
 }
 
-func packMaxRects(sprites []*Sprite, maxSize, padding int, allowRotate bool) ([]*PackedSprite, []*Sheet) {
+func packMaxRects(sprites []*Sprite, maxSize, padding int) ([]*PackedSprite, []*Sheet) {
 	var sheets []*Sheet
 
 	current := &Sheet{}
-	bin := newMaxRectsBin(maxSize, maxSize, allowRotate)
+	bin := newMaxRectsBin(maxSize, maxSize)
 	for _, s := range sprites {
 		place := bin.insert(s.Trimmed.Bounds().Dx()+padding, s.Trimmed.Bounds().Dy()+padding)
 		if !place.ok {
 			finalizeSheetSize(current)
 			sheets = append(sheets, current)
 			current = &Sheet{}
-			bin = newMaxRectsBin(maxSize, maxSize, allowRotate)
+			bin = newMaxRectsBin(maxSize, maxSize)
 			place = bin.insert(s.Trimmed.Bounds().Dx()+padding, s.Trimmed.Bounds().Dy()+padding)
 			if !place.ok {
 				place = bin.insert(s.Trimmed.Bounds().Dx(), s.Trimmed.Bounds().Dy())
 				if !place.ok {
-					bin = newMaxRectsBin(max(s.Trimmed.Bounds().Dx(), maxSize), max(s.Trimmed.Bounds().Dy(), maxSize), allowRotate)
+					bin = newMaxRectsBin(max(s.Trimmed.Bounds().Dx(), maxSize), max(s.Trimmed.Bounds().Dy(), maxSize))
 					place = bin.insert(s.Trimmed.Bounds().Dx(), s.Trimmed.Bounds().Dy())
 				}
 			}
@@ -65,7 +64,7 @@ func packMaxRects(sprites []*Sprite, maxSize, padding int, allowRotate bool) ([]
 		w := s.Trimmed.Bounds().Dx()
 		h := s.Trimmed.Bounds().Dy()
 		px, py := place.X, place.Y
-		ps := &PackedSprite{Sprite: s, SheetIndex: len(sheets), Position: image.Pt(px, py), Rotated: rot}
+		ps := &PackedSprite{Sprite: s, SheetIndex: len(sheets), Position: image.Pt(px, py)}
 		current.Sprites = append(current.Sprites, ps)
 		if !rot {
 			current.W = max(current.W, px+w)

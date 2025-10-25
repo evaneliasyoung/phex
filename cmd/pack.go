@@ -10,7 +10,6 @@ import (
 var packName string
 var maxSize int
 var padding int
-var rotate bool
 
 var packCmd = &cobra.Command{
 	Use:   "pack <input-dir>",
@@ -27,7 +26,7 @@ transparent borders, deduplicate identical frames, and use an optimal bin-packin
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		cli.RunPack(args[0], outputDir, packName, maxSize, padding, rotate)
+		cli.RunPack(args[0], outputDir, packName, maxSize, padding)
 	},
 }
 
@@ -38,5 +37,4 @@ func init() {
 	packCmd.Flags().StringVarP(&outputDir, "output", "o", "./output", "Output directory for atlas and images")
 	packCmd.Flags().IntVarP(&maxSize, "maxsize", "m", 2048, "Maximum width/height of output sheets")
 	packCmd.Flags().IntVarP(&padding, "padding", "p", 0, "Padding pixels between sprites in the sheet")
-	packCmd.Flags().BoolVar(&rotate, "rotate", false, "Allow 90° rotation for tighter packing")
 }
