@@ -1,3 +1,3 @@
 package internal
 
-var Version string = "dev"
+var Version string = "0.1.1"

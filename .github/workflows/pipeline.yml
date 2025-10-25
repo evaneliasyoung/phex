@@ -32,7 +32,7 @@ jobs:
         env:
           GOOS: ${{matrix.os}}
           GOARCH: ${{matrix.arch}}
-        run: go build -o ./dist/phex-${{matrix.os}}-${{matrix.arch}} -ldflags="-X 'github.com/evaneliasyoung/phex/internal.Version=$(git describe --tags --always --dirty)'"
+        run: go build -o ./dist/phex-${{matrix.os}}-${{matrix.arch}}
 
       - name: upload artifact
         uses: actions/upload-artifact@v4
