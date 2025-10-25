@@ -9,8 +9,8 @@ A Go CLI that packs **Phaser 3** sprite atlases from individual images _and_ unp
 
 - **Pack** a directory of sprites into a single atlas image + Phaser 3 JSON.
 - **Unpack** a Phaser 3 atlas (`.json`) into individual frame images.
-- ✂️ **Trim** transparent borders when packing (optional).
-- 🧰 **Dedupe** identical frames when packing (optional).
+- ✂️ **Trim** transparent borders when packing.
+- 🧰 **Dedupe** identical frames when packing.
 - 📐 **Efficient bin-packing** to minimize atlas size.
 - ⚙️ **Fast + concurrent** for big batches (hundreds to thousands of images).
 - 🎯 Focused on **Phaser 3 (Matter)** pipelines.
