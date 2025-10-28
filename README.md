@@ -116,9 +116,11 @@ phex pack sprites -o ./rooms -n coffee -m 4096
 
 ## Dependencies
 
-- [`gen2brain/webp`](https://github.com/gen2brain/webp) — WebP encoder
-- [`hwnon/filetype`](https://github.com/hwnon/filetype) — Determine file types
-- [`spf13/cobra`](https://github.com/spf13/cobra) — CLI framework
-- [`vbauerster/mpb`](https://github.com/vbauerster/mpb) — Progress bars
-- [`golang.org/x/image`](https://pkg.go.dev/golang.org/x/image) — GIF, TIFF, WEBP decoder
-- [`golang.org/x/term`](https://pkg.go.dev/golang.org/x/term) — Determine if TTY
+| Package                                                          | Purpose                 | License      |
+| ---------------------------------------------------------------- | ----------------------- | ------------ |
+| [`gen2brain/webp`](https://pkg.go.dev/github.com/gen2brain/webp) | WebP encoder            | MIT          |
+| [`h2non/filetype`](https://pkg.go.dev/github.com/h2non/filetype) | Determine file types    | MIT          |
+| [`spf13/cobra`](https://pkg.go.dev/github.com/spf13/cobra)       | CLI framework           | Apache-2.0   |
+| [`vbauerster/mpb`](https://pkg.go.dev/github.com/vbauerster/mpb) | Progress bars           | Unlicense    |
+| [`golang.org/x/image`](https://pkg.go.dev/golang.org/x/image)    | GIF, TIFF, WebP decoder | BSD-3-Clause |
+| [`golang.org/x/term`](https://pkg.go.dev/golang.org/x/term)      | TTY determination       | BSD-3-Clause |
