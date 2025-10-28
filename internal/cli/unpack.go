@@ -36,7 +36,7 @@ func RunUnpack(atlasPath, outputDir string, workers int, noProgress bool) error 
 		Workers:   workers,
 	}
 
-	numSheets := len(unpacker.Atlas.Textures)
+	numSheets := len(unpacker.Textures)
 
 	fmt.Printf("[info] found %d texture sheets\n", numSheets)
 	fmt.Printf("[info] writing to %s\n", unpacker.OutputDir)

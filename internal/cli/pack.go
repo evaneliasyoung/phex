@@ -19,10 +19,14 @@ func isSupportedFile(path string, d fs.DirEntry) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	defer file.Close()
 
 	head := make([]byte, 261)
 	_, err = file.Read(head)
+	if err != nil {
+		return false, err
+	}
+
+	err = file.Close()
 	if err != nil {
 		return false, err
 	}
