@@ -9,6 +9,7 @@ import (
 	"image/png"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Sprite struct {
@@ -20,17 +21,17 @@ type Sprite struct {
 	Hash       string
 }
 
-func LoadAndTrim(paths []string) ([]*Sprite, error) {
+func LoadAndTrim(root string, paths []string) ([]*Sprite, error) {
 	var sprites []*Sprite
 	for _, path := range paths {
 		f, err := os.Open(path)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to open %s: %w", path, err)
 		}
 		img, err := png.Decode(f)
 		_ = f.Close()
 		if err != nil {
-			return nil, fmt.Errorf("decode %s: %w", path, err)
+			return nil, fmt.Errorf("failed to decode %s: %w", path, err)
 		}
 
 		nrgba := image.NewNRGBA(img.Bounds())
@@ -39,8 +40,13 @@ func LoadAndTrim(paths []string) ([]*Sprite, error) {
 		trimmed, bounds, wasTrimmed := trimNRGBA(nrgba)
 		hash := hashImage(trimmed)
 
-		name := filepath.Base(path)
-		name = name[:len(name)-len(filepath.Ext(name))]
+		rel, err := filepath.Rel(root, path)
+		if err != nil {
+			return nil, fmt.Errorf("failed to determine frame name for %s: %w", path, err)
+		}
+		rel = filepath.ToSlash(rel)
+		ext := filepath.Ext(rel)
+		name := strings.TrimSuffix(rel, ext)
 
 		s := &Sprite{
 			Name:       name,

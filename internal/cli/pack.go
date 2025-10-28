@@ -2,21 +2,24 @@ package cli
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 
 	"github.com/evaneliasyoung/phex/internal/pack"
 )
 
 func RunPack(inputDir, outputDir, packName string, maxSize, padding int) error {
-	files, err := filepath.Glob(filepath.Join(inputDir, "*.png"))
+	files, err := findImageFiles(inputDir)
 	if err != nil {
 		return fmt.Errorf("failed to list input directory: %w", err)
 	}
 
 	numSprites := len(files)
 	if numSprites == 0 {
-		return fmt.Errorf("no PNG files found in %s", inputDir)
+		return fmt.Errorf("no image files found in %s", inputDir)
 	}
 
 	fmt.Printf("[info] found %d textures\n", numSprites)
@@ -29,7 +32,7 @@ func RunPack(inputDir, outputDir, packName string, maxSize, padding int) error {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 
-	sprites, err := pack.LoadAndTrim(files)
+	sprites, err := pack.LoadAndTrim(inputDir, files)
 	if err != nil {
 		return fmt.Errorf("failed to load input images: %w", err)
 	}
@@ -49,4 +52,30 @@ func RunPack(inputDir, outputDir, packName string, maxSize, padding int) error {
 	fmt.Printf("[info] packed %d sprites into %d sheets", len(sprites), len(sheets))
 
 	return nil
+}
+
+func isSupportedFileType(path string) bool {
+	ext := strings.ToLower(filepath.Ext(path))
+	return ext == ".png"
+}
+
+func findImageFiles(root string) ([]string, error) {
+	var files []string
+	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !d.IsDir() && isSupportedFileType(d.Name()) {
+			files = append(files, path)
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	sort.Strings(files)
+	return files, nil
 }
