@@ -117,7 +117,8 @@ phex pack sprites -o ./rooms -n coffee -m 4096
 ## Dependencies
 
 - [`gen2brain/webp`](https://github.com/gen2brain/webp) — WebP encoder
+- [`hwnon/filetype`](https://github.com/hwnon/filetype) — Determine file types
 - [`spf13/cobra`](https://github.com/spf13/cobra) — CLI framework
 - [`vbauerster/mpb`](https://github.com/vbauerster/mpb) — Progress bars
-- [`golang.org/x/image/webp`](https://pkg.go.dev/golang.org/x/image/webp) — WEBP decoder
+- [`golang.org/x/image`](https://pkg.go.dev/golang.org/x/image) — GIF, TIFF, WEBP decoder
 - [`golang.org/x/term`](https://pkg.go.dev/golang.org/x/term) — Determine if TTY
