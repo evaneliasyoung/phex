@@ -6,10 +6,18 @@ import (
 	"fmt"
 	"image"
 	"image/draw"
-	"image/png"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/h2non/filetype"
+	"github.com/h2non/filetype/matchers"
+	_ "golang.org/x/image/bmp"
+	_ "golang.org/x/image/tiff"
+	_ "golang.org/x/image/webp"
 )
 
 type Sprite struct {
@@ -28,7 +36,7 @@ func LoadAndTrim(root string, paths []string) ([]*Sprite, error) {
 		if err != nil {
 			return nil, fmt.Errorf("failed to open %s: %w", path, err)
 		}
-		img, err := png.Decode(f)
+		img, _, err := image.Decode(f)
 		_ = f.Close()
 		if err != nil {
 			return nil, fmt.Errorf("failed to decode %s: %w", path, err)
@@ -118,4 +126,18 @@ func DedupeWithMap(sprites []*Sprite) ([]*Sprite, map[string]string) {
 		unique = append(unique, s)
 	}
 	return unique, alias
+}
+
+var supportedImage = matchers.Map{
+	matchers.TypeGif:  matchers.Gif,
+	matchers.TypeJpeg: matchers.Jpeg,
+	matchers.TypePng:  matchers.Png,
+	matchers.TypeBmp:  matchers.Bmp,
+	matchers.TypeTiff: matchers.Tiff,
+	matchers.TypeWebp: matchers.Webp,
+}
+
+func IsSupportedImage(buf []byte) bool {
+	kind := filetype.MatchMap(buf, supportedImage)
+	return kind != filetype.Unknown
 }
