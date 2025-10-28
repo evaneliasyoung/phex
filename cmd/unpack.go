@@ -27,7 +27,8 @@ This writes each frame to an output directory, preserving any subfolder structur
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		cli.RunUnpack(args[0], outputDir, workers, noProgress)
+		err := cli.RunUnpack(args[0], outputDir, workers, noProgress)
+		cobra.CheckErr(err)
 	},
 }
 

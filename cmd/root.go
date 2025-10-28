@@ -21,9 +21,11 @@ for Phaser 3. Includes transparency trimming, dupl,icate-sprite
 deduplication, and optimal packing.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if showVersion {
-			fmt.Print(internal.Version)
+			_, err := fmt.Print(internal.Version)
+			cobra.CheckErr(err)
 		} else {
-			cmd.Help()
+			err := cmd.Help()
+			cobra.CheckErr(err)
 		}
 	},
 }

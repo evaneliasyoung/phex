@@ -26,7 +26,8 @@ transparent borders, deduplicate identical frames, and use an optimal bin-packin
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		cli.RunPack(args[0], outputDir, packName, maxSize, padding)
+		err := cli.RunPack(args[0], outputDir, packName, maxSize, padding)
+		cobra.CheckErr(err)
 	},
 }
 
