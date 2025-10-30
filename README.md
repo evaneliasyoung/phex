@@ -80,8 +80,6 @@ Pack-specific:
 | `-p, --padding <px>`   | Padding pixels between sprites in the sheet                                         | `0`     |
 | `-n, --name <base>`    | The name of the sprite sheets and the atlas file (e.g., `atlas.json`, `atlas.webp`) | `atlas` |
 
-> If a flag isn’t implemented yet in your codebase, it will land as part of the Roadmap below.
-
 ---
 
 ## Examples
