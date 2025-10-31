@@ -1,0 +1,120 @@
+name: release
+
+on:
+  workflow_run:
+    workflows: ["ci"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+
+    steps:
+      - name: resolve release tag
+        id: tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const sha = context.payload.workflow_run.head_sha;
+            const tagPattern = /^v\d+\.\d+\.\d+$/;
+            const tags = await github.paginate(
+              github.rest.repos.listTags,
+              { owner, repo, per_page: 100 }
+            );
+            const match = tags.find(
+              (tag) => tag.commit.sha === sha && tagPattern.test(tag.name)
+            );
+            core.setOutput("tag", match ? match.name : "");
+
+  build:
+    needs: prepare
+    if: ${{ needs.prepare.result == 'success' && needs.prepare.outputs.tag != '' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [windows, darwin, linux]
+        arch: [amd64, arm64]
+        exclude:
+          - os: windows
+            arch: arm64
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
+
+      - name: setup go
+        uses: actions/setup-go@v6
+        with:
+          go-version: stable
+
+      - name: build
+        env:
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
+        run: go build -o ./dist/phex-${{ matrix.os }}-${{ matrix.arch }}
+
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phex-${{ matrix.os }}-${{ matrix.arch }}
+          path: ./dist/phex-*
+
+  release:
+    needs:
+      - prepare
+      - build
+    if: ${{ needs.prepare.result == 'success' && needs.prepare.outputs.tag != '' }}
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: phex-*
+          merge-multiple: true
+
+      - name: rename artifacts
+        run: |
+          cd ./artifacts
+          mv phex-windows-amd64 phex-windows-x86_64.exe
+          mv phex-darwin-amd64 phex-macos-x86_64
+          mv phex-darwin-arm64 phex-macos-aarch64
+          mv phex-linux-amd64 phex-linux-x86_64
+          mv phex-linux-arm64 phex-linux-aarch64
+
+      - name: generate checksums
+        run: |
+          cd ./artifacts
+          sha256sum \
+            phex-windows-x86_64.exe \
+            phex-macos-x86_64 \
+            phex-macos-aarch64 \
+            phex-linux-x86_64 \
+            phex-linux-aarch64 > checksums.txt
+
+      - name: release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare.outputs.tag }}
+          name: ${{ needs.prepare.outputs.tag }}
+          files: |
+            ./artifacts/phex-windows-x86_64.exe
+            ./artifacts/phex-macos-x86_64
+            ./artifacts/phex-macos-aarch64
+            ./artifacts/phex-linux-x86_64
+            ./artifacts/phex-linux-aarch64
+            ./artifacts/checksums.txt
