@@ -64,19 +64,13 @@ func packMaxRects(sprites []*Sprite, maxSize, padding int) ([]*PackedSprite, []*
 				return nil, nil, fmt.Errorf("failed to place sprite %q (%dx%d) into a new sheet of size %dx%d", s.Name, spriteWidth, spriteHeight, maxSize, maxSize)
 			}
 		}
-		rot := place.rot
 		w := spriteWidth
 		h := spriteHeight
 		px, py := place.X, place.Y
 		ps := &PackedSprite{Sprite: s, SheetIndex: len(sheets), Position: image.Pt(px, py)}
 		current.Sprites = append(current.Sprites, ps)
-		if !rot {
-			current.W = max(current.W, px+w)
-			current.H = max(current.H, py+h)
-		} else {
-			current.W = max(current.W, px+h)
-			current.H = max(current.H, py+w)
-		}
+		current.W = max(current.W, px+w)
+		current.H = max(current.H, py+h)
 	}
 	finalizeSheetSize(current)
 	sheets = append(sheets, current)

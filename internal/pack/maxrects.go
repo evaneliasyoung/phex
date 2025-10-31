@@ -17,8 +17,7 @@ func newMaxRectsBin(w, h int) *maxRectsBin {
 
 type maxrectsPlace struct {
 	phaser.Rect
-	rot bool
-	ok  bool
+	ok bool
 }
 
 func (b *maxRectsBin) insert(w, h int) maxrectsPlace {
@@ -29,7 +28,7 @@ func (b *maxRectsBin) insert(w, h int) maxrectsPlace {
 			ss := min(r.Dx()-w, r.Dy()-h)
 			ls := max(r.Dx()-w, r.Dy()-h)
 			if ss < bestSS || (ss == bestSS && ls < bestLS) {
-				best = maxrectsPlace{Rect: phaser.Rect{X: r.Min.X, Y: r.Min.Y, W: w, H: h}, rot: false, ok: true}
+				best = maxrectsPlace{Rect: phaser.Rect{X: r.Min.X, Y: r.Min.Y, W: w, H: h}, ok: true}
 				bestSS, bestLS = ss, ls
 			}
 		}
