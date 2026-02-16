@@ -55,8 +55,10 @@ func packMaxRects(sprites []*Sprite, maxSize, padding int) ([]*PackedSprite, []*
 
 		place := bin.insert(spriteWidth+padding, spriteHeight+padding)
 		if !place.ok {
-			finalizeSheetSize(current)
-			sheets = append(sheets, current)
+			if len(current.Sprites) > 0 {
+				finalizeSheetSize(current)
+				sheets = append(sheets, current)
+			}
 			current = &Sheet{}
 			bin = newMaxRectsBin(maxSize, maxSize)
 			place = bin.insert(spriteWidth+padding, spriteHeight+padding)
@@ -72,8 +74,10 @@ func packMaxRects(sprites []*Sprite, maxSize, padding int) ([]*PackedSprite, []*
 		current.W = max(current.W, px+w)
 		current.H = max(current.H, py+h)
 	}
-	finalizeSheetSize(current)
-	sheets = append(sheets, current)
+	if len(current.Sprites) > 0 || len(sheets) == 0 {
+		finalizeSheetSize(current)
+		sheets = append(sheets, current)
+	}
 	var out []*PackedSprite
 	for _, sh := range sheets {
 		out = append(out, sh.Sprites...)
