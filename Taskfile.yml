@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: "3"
+
+vars:
+  BIN_PATH: ./phex{{if eq OS "windows"}}.exe{{end}}
+  CLI_ARGS: ""
+
+tasks:
+  default:
+    desc: List available tasks
+    aliases:
+      - ls
+    cmds:
+      - task --list-all
+    silent: true
+
+  deps:
+    desc: Download Go module dependencies
+    cmds:
+      - go mod download
+
+  format:check:
+    desc: Check Go formatting
+    aliases:
+      - fmt:check
+      - format-check
+    cmds:
+      - gofmt -l .
+
+  format:
+    desc: Format Go code
+    aliases:
+      - fmt
+    cmds:
+      - gofmt -s -w .
+
+  clean:
+    desc: Clean Go build/test cache
+    cmd: go clean
+
+  vet:
+    desc: Run go vet
+    cmds:
+      - go vet ./...
+
+  lint:
+    desc: Run golangci-lint-v2
+    cmd: golangci-lint-v2 run --path-mode=abs --show-stats=true --output.text.path=stdout
+
+  test:
+    desc: Run unit tests
+    cmds:
+      - go test ./... -coverprofile=coverage.out
+
+  check:
+    desc: Run formatting, vet, and tests
+    aliases:
+      - ci
+    deps: [format, vet, test]
+
+  build:
+    desc: Build phex binary
+    cmds:
+      - go build -o {{.BIN_PATH}} .
+
+  run:
+    desc: Run phex with optional CLI_ARGS
+    cmds:
+      - go run . {{.CLI_ARGS}}
+
+  changelog:
+    desc: Generate changelog (requires Nushell)
+    cmds:
+      - nu generate_changelog.nu
+
+  publish-tag:
+    desc: Publish git tag (requires Nushell)
+    aliases:
+      - tag
+    cmds:
+      - nu publish_tag.nu

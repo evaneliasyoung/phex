@@ -3,13 +3,14 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/evaneliasyoung/phex/internal"
 	"github.com/spf13/cobra"
 )
 
 var outputDir string
-var showVersion bool
+var showVersion int
 
 var rootCmd = &cobra.Command{
 	Use:   "phex",
@@ -20,18 +21,25 @@ Pack individual PNGs into WebP sprite sheets and unpack existing atlases
 for Phaser 3. Includes transparency trimming, dupl,icate-sprite
 deduplication, and optimal packing.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if showVersion {
+		switch showVersion {
+		case 0:
+			err := cmd.Help()
+			cobra.CheckErr(err)
+		case 1:
 			_, err := fmt.Print(internal.Version)
 			cobra.CheckErr(err)
-		} else {
-			err := cmd.Help()
+		case 2:
+			_, err := fmt.Printf("%s-%s", internal.Version, runtime.GOOS)
+			cobra.CheckErr(err)
+		case 3:
+			_, err := fmt.Printf("%s-%s-%s", internal.Version, runtime.GOOS, runtime.GOARCH)
 			cobra.CheckErr(err)
 		}
 	},
 }
 
 func init() {
-	rootCmd.Flags().BoolVarP(&showVersion, "version", "v", false, "version of phex")
+	rootCmd.Flags().CountVarP(&showVersion, "version", "v", "version of phex")
 }
 
 func Execute() {

@@ -88,7 +88,10 @@ func RunPack(inputDir, outputDir, packName string, maxSize, padding int) error {
 
 	deduped, aliasMap := pack.DedupeWithMap(sprites)
 
-	packed, sheets := pack.PackSprites(deduped, maxSize, padding)
+	packed, sheets, err := pack.PackSprites(deduped, maxSize, padding)
+	if err != nil {
+		return fmt.Errorf("failed to pack sprites: %w", err)
+	}
 
 	fmt.Printf("[info] writing to %s\n", filepath.Join(outputDir, packName))
 	if err := pack.SaveSheets(packed, sheets, packName, outputDir); err != nil {
