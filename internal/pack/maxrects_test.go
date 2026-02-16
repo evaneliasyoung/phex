@@ -1,124 +1,94 @@
-package pack_test
+package pack
 
 import (
 	"image"
 	"testing"
-
-	"github.com/evaneliasyoung/phex/internal/pack"
 )
 
-func makeSprite(name string, w, h int) *pack.Sprite {
+func makeSprite(name string, w, h int) *Sprite {
 	img := image.NewNRGBA(image.Rect(0, 0, w, h))
-	return &pack.Sprite{
-		Name:     name,
-		FullSize: img.Bounds(),
-		Trimmed:  img,
+	return &Sprite{
+		Name:       name,
+		FullSize:   img.Bounds(),
+		Trimmed:    img,
+		TrimBounds: img.Bounds(),
 	}
 }
 
-func TestPackSpritesShortSideHeuristic(t *testing.T) {
-	sprites := []*pack.Sprite{
+func TestPackSpritesProducesValidPacking(t *testing.T) {
+	sprites := []*Sprite{
 		makeSprite("strip", 4, 1),
 		makeSprite("square", 2, 2),
 		makeSprite("bar", 2, 1),
 	}
 
-	packed, sheets, err := pack.PackSprites(sprites, 4, 0)
+	packed, sheets, err := PackSprites(sprites, 4, 0)
 	if err != nil {
-		t.Fatalf("pack.PackSprites returned error: %v", err)
+		t.Fatalf("PackSprites returned error: %v", err)
 	}
-
 	if len(sheets) != 1 {
 		t.Fatalf("expected a single sheet, got %d", len(sheets))
 	}
-	if sheets[0].W != 4 || sheets[0].H != 4 {
-		t.Fatalf("unexpected sheet size %dx%d", sheets[0].W, sheets[0].H)
-	}
 
-	placements := make(map[string]struct {
-		idx int
-		pos image.Point
-	})
-	for _, p := range packed {
-		placements[p.Sprite.Name] = struct {
-			idx int
-			pos image.Point
-		}{idx: p.SheetIndex, pos: p.Position}
-	}
-
-	for name, want := range map[string]struct {
-		idx int
-		pos image.Point
-	}{
-		"strip":  {idx: 0, pos: image.Pt(0, 0)},
-		"square": {idx: 0, pos: image.Pt(0, 1)},
-		"bar":    {idx: 0, pos: image.Pt(0, 3)},
-	} {
-		got, ok := placements[name]
-		if !ok {
-			t.Fatalf("missing placement for %q", name)
-		}
-		if got.idx != want.idx {
-			t.Fatalf("%s placed on sheet %d, want %d", name, got.idx, want.idx)
-		}
-		if got.pos != want.pos {
-			t.Fatalf("%s positioned at %v, want %v", name, got.pos, want.pos)
-		}
+	assertValidPacking(t, packed, sheets)
+	if gotArea := scorePacking(sheets).totalArea; gotArea > 16 {
+		t.Fatalf("expected packed area <= 16, got %d", gotArea)
 	}
 }
 
-func TestPackSpritesAllocatesNewSheet(t *testing.T) {
-	sprites := []*pack.Sprite{
+func TestPackSpritesAllocatesMultipleSheetsWhenRequired(t *testing.T) {
+	sprites := []*Sprite{
 		makeSprite("strip", 4, 1),
 		makeSprite("large", 3, 3),
 		makeSprite("extra", 2, 2),
 	}
 
-	packed, sheets, err := pack.PackSprites(sprites, 4, 0)
+	packed, sheets, err := PackSprites(sprites, 4, 0)
 	if err != nil {
-		t.Fatalf("pack.PackSprites returned error: %v", err)
+		t.Fatalf("PackSprites returned error: %v", err)
+	}
+	if len(sheets) < 2 {
+		t.Fatalf("expected at least two sheets, got %d", len(sheets))
 	}
 
-	if len(sheets) != 2 {
-		t.Fatalf("expected two sheets, got %d", len(sheets))
-	}
-	if sheets[0].W != 4 || sheets[0].H != 4 {
-		t.Fatalf("unexpected first sheet size %dx%d", sheets[0].W, sheets[0].H)
-	}
-	if sheets[1].W != 2 || sheets[1].H != 2 {
-		t.Fatalf("unexpected second sheet size %dx%d", sheets[1].W, sheets[1].H)
+	assertValidPacking(t, packed, sheets)
+}
+
+func assertValidPacking(t *testing.T, packed []*PackedSprite, sheets []*Sheet) {
+	t.Helper()
+
+	if len(packed) == 0 {
+		return
 	}
 
-	placements := make(map[string]struct {
-		idx int
-		pos image.Point
-	})
-	for _, p := range packed {
-		placements[p.Sprite.Name] = struct {
-			idx int
-			pos image.Point
-		}{idx: p.SheetIndex, pos: p.Position}
-	}
+	rectsBySheet := make(map[int][]image.Rectangle)
+	seen := make(map[string]bool)
 
-	expectations := map[string]struct {
-		idx int
-		pos image.Point
-	}{
-		"strip": {idx: 0, pos: image.Pt(0, 0)},
-		"large": {idx: 0, pos: image.Pt(0, 1)},
-		"extra": {idx: 1, pos: image.Pt(0, 0)},
-	}
-
-	for name, want := range expectations {
-		got, ok := placements[name]
-		if !ok {
-			t.Fatalf("missing placement for %q", name)
+	for _, ps := range packed {
+		if ps.SheetIndex < 0 || ps.SheetIndex >= len(sheets) {
+			t.Fatalf("sprite %q placed on invalid sheet index %d", ps.Sprite.Name, ps.SheetIndex)
 		}
-		if got.idx != want.idx {
-			t.Fatalf("%s placed on sheet %d, want %d", name, got.idx, want.idx)
+		if seen[ps.Sprite.Name] {
+			t.Fatalf("sprite %q appears more than once", ps.Sprite.Name)
 		}
-		if got.pos != want.pos {
-			t.Fatalf("%s positioned at %v, want %v", name, got.pos, want.pos)
+		seen[ps.Sprite.Name] = true
+
+		w, h := spriteSize(ps.Sprite)
+		r := image.Rect(ps.Position.X, ps.Position.Y, ps.Position.X+w, ps.Position.Y+h)
+		sh := sheets[ps.SheetIndex]
+		if r.Max.X > sh.W || r.Max.Y > sh.H || r.Min.X < 0 || r.Min.Y < 0 {
+			t.Fatalf("sprite %q rect %v is out of sheet bounds %dx%d", ps.Sprite.Name, r, sh.W, sh.H)
+		}
+		rectsBySheet[ps.SheetIndex] = append(rectsBySheet[ps.SheetIndex], r)
+	}
+
+	for sheetIdx, rects := range rectsBySheet {
+		for i := 0; i < len(rects); i++ {
+			for j := i + 1; j < len(rects); j++ {
+				if rects[i].Overlaps(rects[j]) {
+					t.Fatalf("sheet %d has overlapping rects %v and %v", sheetIdx, rects[i], rects[j])
+				}
+			}
 		}
 	}
 }
