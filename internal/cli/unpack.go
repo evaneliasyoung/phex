@@ -23,9 +23,16 @@ func RunUnpack(atlasPath, outputDir string, workers int, noProgress bool) error 
 	}
 
 	inputDir := filepath.Dir(atlasPath)
-	packName := strings.TrimSuffix(inputDir, ".json")
+	atlasName := filepath.Base(atlasPath)
+	atlasExt := filepath.Ext(atlasName)
+
+	packName := atlasName
+	if strings.EqualFold(atlasExt, ".json") {
+		packName = strings.TrimSuffix(atlasName, atlasExt)
+	}
+
 	if outputDir == "" {
-		outputDir = filepath.Join(filepath.Dir(atlasPath), packName)
+		outputDir = filepath.Join(inputDir, packName)
 	}
 
 	unpacker := unpack.Unpacker{
