@@ -5,7 +5,7 @@ go 1.25.3
 require (
 	github.com/gen2brain/webp v0.5.5
 	github.com/h2non/filetype v1.1.3
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/vbauerster/mpb/v8 v8.12.0
 	golang.org/x/image v0.32.0
 	golang.org/x/term v0.40.0
