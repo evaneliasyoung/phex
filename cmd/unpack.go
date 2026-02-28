@@ -4,6 +4,7 @@ import (
 	"errors"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/evaneliasyoung/phex/internal/cli"
 	"github.com/spf13/cobra"
@@ -21,7 +22,7 @@ Provide the path to a Phaser-compatible atlas JSON (e.g. TexturePacker or Phex o
 This writes each frame to an output directory, preserving any subfolder structure when available.
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 || filepath.Ext(args[0]) != ".json" {
+		if len(args) < 1 || strings.ToLower(filepath.Ext(args[0])) != ".json" {
 			return errors.New("unpack requires an atlas.json file")
 		}
 		if workers <= 0 {
