@@ -8,7 +8,7 @@ require (
 	github.com/spf13/cobra v1.10.1
 	github.com/vbauerster/mpb/v8 v8.10.2
 	golang.org/x/image v0.32.0
-	golang.org/x/term v0.36.0
+	golang.org/x/term v0.40.0
 )
 
 require (
@@ -20,5 +20,5 @@ require (
 	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/tetratelabs/wazero v1.9.0 // indirect
-	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/sys v0.41.0 // indirect
 )
