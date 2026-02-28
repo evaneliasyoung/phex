@@ -17,8 +17,8 @@ var rootCmd = &cobra.Command{
 	Short: "Pack and unpack Phaser 3 sprite atlases",
 	Long: `Phex - Phaser Texture Manager
 
-Pack individual PNGs into WebP sprite sheets and unpack existing atlases
-for Phaser 3. Includes transparency trimming, dupl,icate-sprite
+Pack individual images into WebP sprite sheets and unpack existing atlases
+for Phaser 3. Includes transparency trimming, duplicate-sprite
 deduplication, and optimal packing.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		switch showVersion {
