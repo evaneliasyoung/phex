@@ -23,6 +23,10 @@ func (unpacker Unpacker) UnpackTexture(tex phaser.Texture, reporter ProgressRepo
 	if err != nil {
 		return fmt.Errorf("failed to decode webp file: %w", err)
 	}
+	err = sheetFile.Close()
+	if err != nil {
+		return fmt.Errorf("failed to close texture sheet: %w", err)
+	}
 
 	jobs := make(chan phaser.Frame)
 	results := make(chan error, len(tex.Frames))
