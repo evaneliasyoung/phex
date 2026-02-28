@@ -30,6 +30,9 @@ func (r *unpackReporter) AtlasProcessed() {
 
 func MakeUnpackReporter(unpacker unpack.Unpacker, totalTextures *int, noProgress bool) *unpackReporter {
 	if !IsTTY || noProgress {
+		for _, sh := range unpacker.Textures {
+			*totalTextures += len(sh.Frames)
+		}
 		return &unpackReporter{p: nil, textures: nil, total: nil}
 	}
 
