@@ -24,6 +24,9 @@ This writes each frame to an output directory, preserving any subfolder structur
 		if len(args) < 1 || filepath.Ext(args[0]) != ".json" {
 			return errors.New("unpack requires an atlas.json file")
 		}
+		if workers <= 0 {
+			return errors.New("workers must be greater than or equal to 1")
+		}
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
