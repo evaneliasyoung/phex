@@ -105,7 +105,7 @@ phex pack sprites -o ./rooms -n coffee -m 4096
 
 ## Compatibility
 
-- **Input (pack):** `.png` (subfolders supported).
+- **Input (pack):** GIF/JPEG/PNG/BMP/TIFF/WebP (subfolders supported).
 - **Output (pack):** atlas image (`.webp`) + Phaser 3 JSON.
 - **Input (unpack):** Phaser-compatible atlas JSON (Phex/TexturePacker style).
 - **Output (unpack):** individual `.png` frames.

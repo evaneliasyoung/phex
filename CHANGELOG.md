@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.2.1
+
+> 2026-02-28
+
+- [[`3b89c5d`](https://github.com/evaneliasyoung/phex/commit/3b89c5d)] fix: :bug: run go mod tidy, fix `go.sum`
+- [[`6920a7d`](https://github.com/evaneliasyoung/phex/commit/6920a7d)] docs: :memo: note that most image formats are supported for packing
+- [[`d5ad149`](https://github.com/evaneliasyoung/phex/commit/d5ad149)] build: :arrow_up: upgrade `github.com/spf13/cobra`
+- [[`e5e549e`](https://github.com/evaneliasyoung/phex/commit/e5e549e)] build: :arrow_up: upgrade `github.com/vbauerster/mpb/v8`
+- [[`f49bbf2`](https://github.com/evaneliasyoung/phex/commit/f49bbf2)] build: :arrow_up: upgrade `golang.org/x/term`
+- [[`bd49f34`](https://github.com/evaneliasyoung/phex/commit/bd49f34)] fix: :pencil2: correct punctuation in the command description
+- [[`56f9a55`](https://github.com/evaneliasyoung/phex/commit/56f9a55)] refactor: :recycle: use more semantic UTF-8 folding when checking atlas extension
+- [[`9ea2f7a`](https://github.com/evaneliasyoung/phex/commit/9ea2f7a)] fix: :bug: derive pack name from the pack file rather than the parent directory
+- [[`6058da8`](https://github.com/evaneliasyoung/phex/commit/6058da8)] fix: :bug: increment total textures unpacked when using the no-progress reporter
+- [[`af9cd7f`](https://github.com/evaneliasyoung/phex/commit/af9cd7f)] fix: :adhesive_bandage: update literals for unpack when the texture sheet fails to decode
+- [[`b05403c`](https://github.com/evaneliasyoung/phex/commit/b05403c)] fix: :bug: convert the extension to lowercase when checking unpack atlas validity
+- [[`f1bad24`](https://github.com/evaneliasyoung/phex/commit/f1bad24)] fix: :adhesive_bandage: update literals for pack when no source is provided
+- [[`b90f140`](https://github.com/evaneliasyoung/phex/commit/b90f140)] fix: :bug: close texture sheet file when unpacking
+- [[`523da4d`](https://github.com/evaneliasyoung/phex/commit/523da4d)] fix: :bug: add check for non-positive worker threads on unpack
+
 ## 0.2.0
 
 > 2026-02-16
