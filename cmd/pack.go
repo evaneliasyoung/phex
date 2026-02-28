@@ -21,7 +21,7 @@ sprite sheet image (e.g., WebP/PNG) and a Phaser 3 JSON describing frames. Phex 
 transparent borders, deduplicate identical frames, and use an optimal bin-packing layout.`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
-			return errors.New("unpack requires an source directory")
+			return errors.New("pack requires a source directory")
 		}
 		return nil
 	},
