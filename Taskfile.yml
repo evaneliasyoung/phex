@@ -20,6 +20,11 @@ tasks:
     cmds:
       - go mod download
 
+  tidy:
+    desc: Tidy Go module dependencies
+    cmds:
+      - go mod tidy
+
   format:check:
     desc: Check Go formatting
     aliases:
@@ -43,6 +48,11 @@ tasks:
     desc: Run go vet
     cmds:
       - go vet ./...
+
+  vuln:
+    desc: Run govulncheck
+    cmds:
+      - govulncheck .
 
   lint:
     desc: Run golangci-lint-v2
