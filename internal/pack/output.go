@@ -33,7 +33,7 @@ func SaveSheets(packed []*PackedSprite, sheets []*Sheet, packName, outputDir str
 			return fmt.Errorf("failed to open output file: %w", err)
 		}
 
-		if err := webp.Encode(f, canvas, webp.Options{Lossless: true}); err != nil {
+		if err := webp.Encode(f, canvas, webp.Options{Lossless: true, Exact: true}); err != nil {
 			_ = f.Close()
 			return fmt.Errorf("failed to write output file: %w", err)
 		}

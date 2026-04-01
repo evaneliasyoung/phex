@@ -37,5 +37,5 @@ func init() {
 	packCmd.Flags().StringVarP(&packName, "name", "n", "atlas", "The name of the sprite sheets and the atlas file")
 	packCmd.Flags().StringVarP(&outputDir, "output", "o", "./output", "Output directory for atlas and images")
 	packCmd.Flags().IntVarP(&maxSize, "maxsize", "m", 2048, "Maximum width/height of output sheets")
-	packCmd.Flags().IntVarP(&padding, "padding", "p", 0, "Padding pixels between sprites in the sheet")
+	packCmd.Flags().IntVarP(&padding, "padding", "p", 1, "Padding pixels between sprites in the sheet")
 }

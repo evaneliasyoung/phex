@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.2
+
+> 2026-03-31
+
+- [[`105037e`](https://github.com/evaneliasyoung/phex/commit/105037e)] build: :wrench: upgrade go to `1.26.1`
+- [[`59b0501`](https://github.com/evaneliasyoung/phex/commit/59b0501)] build: :arrow_up: upgrade `x/image`, `x/term`, and transitives
+- [[`4f2ff7c`](https://github.com/evaneliasyoung/phex/commit/4f2ff7c)] chore: :hammer: add `tidy` and `vuln` to tasks
+- [[`c3ab1c0`](https://github.com/evaneliasyoung/phex/commit/c3ab1c0)] fix: :bug: set default padding to 1px, avoids edge bleed
+
 ## 0.2.1
 
 > 2026-02-28

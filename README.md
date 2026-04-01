@@ -77,7 +77,7 @@ Pack-specific:
 | Flag                   | Description                                                                         | Default |
 | ---------------------- | ----------------------------------------------------------------------------------- | ------- |
 | `-m, --maxsize <size>` | Maximum texture sheet size (as a square)                                            | `2048`  |
-| `-p, --padding <px>`   | Padding pixels between sprites in the sheet                                         | `0`     |
+| `-p, --padding <px>`   | Padding pixels between sprites in the sheet; 0 may cause edge bleed                 | `1`     |
 | `-n, --name <base>`    | The name of the sprite sheets and the atlas file (e.g., `atlas.json`, `atlas.webp`) | `atlas` |
 
 ---
