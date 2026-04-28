@@ -24,7 +24,7 @@ Build locally:
 ```bash
 git clone https://github.com/evaneliasyoung/phex.git
 cd phex
-go build -o phex ./cmd/phex
+go build -o phex .
 ```
 
 Or install directly:
