@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var unpackOutputDir string
 var workers int
 var noProgress bool
 
@@ -31,7 +32,7 @@ This writes each frame to an output directory, preserving any subfolder structur
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		err := cli.RunUnpack(args[0], outputDir, workers, noProgress)
+		err := cli.RunUnpack(args[0], unpackOutputDir, workers, noProgress)
 		cobra.CheckErr(err)
 	},
 }
@@ -41,7 +42,7 @@ func init() {
 
 	defaultWorkers := min(2*runtime.NumCPU(), 32)
 
-	unpackCmd.Flags().StringVarP(&outputDir, "output", "o", "", "Output directory")
+	unpackCmd.Flags().StringVarP(&unpackOutputDir, "output", "o", "", "Output directory")
 	unpackCmd.Flags().IntVarP(&workers, "workers", "w", defaultWorkers, "Number of concurrent workers")
 	unpackCmd.Flags().BoolVar(&noProgress, "no-progress", !cli.IsTTY, "Disable progress bars")
 }

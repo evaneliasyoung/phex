@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var outputDir string
 var showVersion int
 
 var rootCmd = &cobra.Command{

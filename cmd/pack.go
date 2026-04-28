@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var packOutputDir string
 var packName string
 var maxSize int
 var padding int
@@ -26,7 +27,7 @@ transparent borders, deduplicate identical frames, and use an optimal bin-packin
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		err := cli.RunPack(args[0], outputDir, packName, maxSize, padding)
+		err := cli.RunPack(args[0], packOutputDir, packName, maxSize, padding)
 		cobra.CheckErr(err)
 	},
 }
@@ -35,7 +36,7 @@ func init() {
 	rootCmd.AddCommand(packCmd)
 
 	packCmd.Flags().StringVarP(&packName, "name", "n", "atlas", "The name of the sprite sheets and the atlas file")
-	packCmd.Flags().StringVarP(&outputDir, "output", "o", "./output", "Output directory for atlas and images")
+	packCmd.Flags().StringVarP(&packOutputDir, "output", "o", "./output", "Output directory for atlas and images")
 	packCmd.Flags().IntVarP(&maxSize, "maxsize", "m", 2048, "Maximum width/height of output sheets")
 	packCmd.Flags().IntVarP(&padding, "padding", "p", 1, "Padding pixels between sprites in the sheet")
 }
