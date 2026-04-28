@@ -1,6 +1,7 @@
 package unpack
 
 import (
+	"errors"
 	"fmt"
 	"image"
 	"image/draw"
@@ -15,6 +16,10 @@ import (
 )
 
 func (unpacker Unpacker) UnpackFrame(fr phaser.Frame, img image.Image) error {
+	if fr.Rotated {
+		return errors.New("rotated frame unpack is not supported")
+	}
+
 	spriteSize := fr.SourceSize.Rect()
 	sprite := image.NewRGBA(spriteSize)
 
