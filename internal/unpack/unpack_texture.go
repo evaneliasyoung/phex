@@ -28,8 +28,15 @@ func (unpacker Unpacker) UnpackTexture(tex phaser.Texture, reporter ProgressRepo
 		return fmt.Errorf("failed to close texture sheet: %w", err)
 	}
 
+	frameCount := len(tex.Frames)
+	workerCount := min(unpacker.Workers, frameCount)
+	if workerCount == 0 {
+		reporter.TextureProcessed(tex)
+		return nil
+	}
+
 	jobs := make(chan phaser.Frame)
-	results := make(chan error, len(tex.Frames))
+	results := make(chan error, frameCount)
 
 	var wg sync.WaitGroup
 
