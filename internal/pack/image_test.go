@@ -3,6 +3,7 @@ package pack_test
 import (
 	"bytes"
 	"crypto/md5"
+	"encoding/binary"
 	"encoding/hex"
 	"image"
 	"image/color"
@@ -138,6 +139,46 @@ func TestDedupeWithMap(t *testing.T) {
 	}
 }
 
+func TestLoadAndTrimHashesIncludeImageDimensions(t *testing.T) {
+	dir := t.TempDir()
+
+	colors := []color.NRGBA{
+		{R: 255, A: 255},
+		{G: 255, A: 255},
+		{B: 255, A: 255},
+		{R: 255, G: 255, A: 255},
+	}
+
+	oneByFour := image.NewNRGBA(image.Rect(0, 0, 1, 4))
+	twoByTwo := image.NewNRGBA(image.Rect(0, 0, 2, 2))
+	for i, c := range colors {
+		oneByFour.SetNRGBA(0, i, c)
+		twoByTwo.SetNRGBA(i%2, i/2, c)
+	}
+
+	oneByFourPath := filepath.Join(dir, "one-by-four.png")
+	twoByTwoPath := filepath.Join(dir, "two-by-two.png")
+	writePNG(t, oneByFourPath, oneByFour)
+	writePNG(t, twoByTwoPath, twoByTwo)
+
+	sprites, err := pack.LoadAndTrim(dir, []string{oneByFourPath, twoByTwoPath})
+	if err != nil {
+		t.Fatalf("LoadAndTrim returned error: %v", err)
+	}
+	if len(sprites) != 2 {
+		t.Fatalf("expected 2 sprites, got %d", len(sprites))
+	}
+
+	if sprites[0].Hash == sprites[1].Hash {
+		t.Fatalf("expected different hashes for same pixels with different dimensions")
+	}
+
+	unique, _ := pack.DedupeWithMap(sprites)
+	if len(unique) != 2 {
+		t.Fatalf("expected differently shaped sprites not to dedupe, got %d unique sprites", len(unique))
+	}
+}
+
 func TestIsSupportedImage(t *testing.T) {
 	img := image.NewNRGBA(image.Rect(0, 0, 2, 2))
 	img.SetNRGBA(0, 0, color.NRGBA{R: 255, A: 255})
@@ -215,6 +256,12 @@ func writePNG(t *testing.T, path string, img image.Image) {
 func hashNRGBA(img *image.NRGBA) string {
 	h := md5.New()
 	b := img.Bounds()
+
+	var size [16]byte
+	binary.LittleEndian.PutUint64(size[0:8], uint64(b.Dx()))
+	binary.LittleEndian.PutUint64(size[8:16], uint64(b.Dy()))
+	h.Write(size[:])
+
 	for y := b.Min.Y; y < b.Max.Y; y++ {
 		row := img.Pix[(y-b.Min.Y)*img.Stride : (y-b.Min.Y+1)*img.Stride]
 		h.Write(row[:b.Dx()*4])
