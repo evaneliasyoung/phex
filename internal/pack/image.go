@@ -2,6 +2,7 @@ package pack
 
 import (
 	"crypto/md5"
+	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"image"
@@ -104,6 +105,12 @@ func trimNRGBA(img *image.NRGBA) (*image.NRGBA, image.Rectangle, bool) {
 func hashImage(img *image.NRGBA) string {
 	h := md5.New()
 	b := img.Bounds()
+
+	var size [16]byte
+	binary.LittleEndian.PutUint64(size[0:8], uint64(b.Dx()))
+	binary.LittleEndian.PutUint64(size[8:16], uint64(b.Dy()))
+	h.Write(size[:])
+
 	for y := b.Min.Y; y < b.Max.Y; y++ {
 		row := img.Pix[(y-b.Min.Y)*img.Stride : (y-b.Min.Y+1)*img.Stride]
 		h.Write(row[:(b.Dx() * 4)])

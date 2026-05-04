@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.3
+
+> 2026-05-04
+
+- [[`6675f8e`](https://github.com/evaneliasyoung/phex/commit/6675f8e)] test: :white_check_mark: fix image hashing in and add multi-sheet tests
+- [[`b3711bf`](https://github.com/evaneliasyoung/phex/commit/b3711bf)] build: :wrench: upgrade go to `1.26.2`
+- [[`aa3e78f`](https://github.com/evaneliasyoung/phex/commit/aa3e78f)] build: :arrow_up: upgrade all dependencies
+- [[`55d3663`](https://github.com/evaneliasyoung/phex/commit/55d3663)] refactor: :recycle: make `--workers` explicitly operate on one atlas at once
+- [[`c82250f`](https://github.com/evaneliasyoung/phex/commit/c82250f)] fix: :bug: take into account image dimensions when computing the hash for deduplication
+- [[`9889882`](https://github.com/evaneliasyoung/phex/commit/9889882)] refactor: :recycle: add warning when a rotated frame in encountered during unpacking
+- [[`009b149`](https://github.com/evaneliasyoung/phex/commit/009b149)] docs: :memo: fix build command in `README.md`
+- [[`3cdb3c6`](https://github.com/evaneliasyoung/phex/commit/3cdb3c6)] refactor: :recycle: separate `outputDir` variable for `unpack` and `pack`
+
 ## 0.2.2
 
 > 2026-03-31
