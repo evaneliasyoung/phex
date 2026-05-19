@@ -7,8 +7,8 @@ require (
 	github.com/h2non/filetype v1.1.3
 	github.com/spf13/cobra v1.10.2
 	github.com/vbauerster/mpb/v8 v8.12.0
-	golang.org/x/image v0.39.0
-	golang.org/x/term v0.42.0
+	golang.org/x/image v0.40.0
+	golang.org/x/term v0.43.0
 )
 
 require (
@@ -20,5 +20,5 @@ require (
 	github.com/mattn/go-runewidth v0.0.23 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/tetratelabs/wazero v1.11.0 // indirect
-	golang.org/x/sys v0.43.0 // indirect
+	golang.org/x/sys v0.44.0 // indirect
 )
