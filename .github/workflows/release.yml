@@ -64,7 +64,7 @@ jobs:
         run: go build -o ./dist/phex-${{ matrix.os }}-${{ matrix.arch }}
 
       - name: upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phex-${{ matrix.os }}-${{ matrix.arch }}
           path: ./dist/phex-*
@@ -81,7 +81,7 @@ jobs:
 
     steps:
       - name: download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: artifacts
           pattern: phex-*
@@ -107,7 +107,7 @@ jobs:
             phex-linux-aarch64 > checksums.txt
 
       - name: release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           name: ${{ needs.prepare.outputs.tag }}
