@@ -15,21 +15,6 @@ permissions:
   contents: read
 
 jobs:
-  format:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: checkout
-        uses: actions/checkout@v5
-
-      - name: setup go
-        uses: actions/setup-go@v6
-        with:
-          go-version: stable
-
-      - name: format
-        run: gofmt -l .
-
   lint:
     runs-on: ubuntu-latest
 
@@ -47,17 +32,8 @@ jobs:
         with:
           version: latest
 
-  vet:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: checkout
-        uses: actions/checkout@v5
-
-      - name: setup go
-        uses: actions/setup-go@v6
-        with:
-          go-version: stable
+      - name: format
+        run: gofmt -l .
 
       - name: vet
         run: go vet ./...
