@@ -63,6 +63,42 @@ func TestSaveSheetsPreservesTransparentRGB(t *testing.T) {
 	}
 }
 
+func TestSaveSheetsRemovesObsoleteAtlasSheets(t *testing.T) {
+	dir := t.TempDir()
+
+	sprite := newPatternSprite("red", image.Rect(0, 0, 1, 1), image.Rect(0, 0, 1, 1), color.NRGBA{R: 255, A: 255})
+	packed := []*pack.PackedSprite{{
+		Sprite:     sprite,
+		SheetIndex: 0,
+		Position:   image.Pt(0, 0),
+	}}
+	sheets := []*pack.Sheet{{
+		Size:    phaser.Size{W: 1, H: 1},
+		Sprites: packed,
+	}}
+
+	for _, name := range []string{"atlas-0.webp", "atlas-1.webp", "atlas-2.webp", "atlas-extra.webp", "other-1.webp"} {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte("stale"), 0o644); err != nil {
+			t.Fatalf("failed to write stale file %s: %v", name, err)
+		}
+	}
+
+	if err := pack.SaveSheets(packed, sheets, "atlas", dir); err != nil {
+		t.Fatalf("SaveSheets returned error: %v", err)
+	}
+
+	for _, name := range []string{"atlas-1.webp", "atlas-2.webp"} {
+		if _, err := os.Stat(filepath.Join(dir, name)); !os.IsNotExist(err) {
+			t.Fatalf("expected %s to be removed, stat error: %v", name, err)
+		}
+	}
+	for _, name := range []string{"atlas-0.webp", "atlas-extra.webp", "other-1.webp"} {
+		if _, err := os.Stat(filepath.Join(dir, name)); err != nil {
+			t.Fatalf("expected %s to remain: %v", name, err)
+		}
+	}
+}
+
 func TestSaveOutputFramesLineUpWithMultipleSpritesOnSheet(t *testing.T) {
 	sprites := []*pack.Sprite{
 		newPatternSprite("red", image.Rect(0, 0, 6, 5), image.Rect(1, 2, 4, 4), color.NRGBA{R: 255, A: 255}),

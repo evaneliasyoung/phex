@@ -7,6 +7,8 @@ import (
 	"image/draw"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 
 	"github.com/evaneliasyoung/phex/internal"
 	"github.com/evaneliasyoung/phex/internal/phaser"
@@ -39,6 +41,38 @@ func SaveSheets(packed []*PackedSprite, sheets []*Sheet, packName, outputDir str
 		}
 		_ = f.Close()
 	}
+	return removeObsoleteSheets(outputDir, packName, len(sheets))
+}
+
+func removeObsoleteSheets(outputDir, packName string, sheetCount int) error {
+	entries, err := os.ReadDir(outputDir)
+	if err != nil {
+		return fmt.Errorf("failed to list output directory: %w", err)
+	}
+
+	prefix := packName + "-"
+	const suffix = ".webp"
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+
+		name := entry.Name()
+		if !strings.HasPrefix(name, prefix) || !strings.HasSuffix(name, suffix) {
+			continue
+		}
+
+		indexText := strings.TrimSuffix(strings.TrimPrefix(name, prefix), suffix)
+		index, err := strconv.Atoi(indexText)
+		if err != nil || index < sheetCount {
+			continue
+		}
+
+		if err := os.Remove(filepath.Join(outputDir, name)); err != nil {
+			return fmt.Errorf("failed to remove obsolete output file %s: %w", name, err)
+		}
+	}
+
 	return nil
 }
 
